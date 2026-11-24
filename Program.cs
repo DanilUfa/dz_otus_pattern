@@ -83,12 +83,18 @@ static void VerifyCopy(Vehicle source, Vehicle clone)
 
 static void VerifyTypedInterfaces()
 {
-    Vehicle vehicle = ((IMyCloneable<Vehicle>)new Vehicle("V")).Clone();
-    MotorVehicle motor = ((IMyCloneable<MotorVehicle>)new MotorVehicle("M", 100)).Clone();
-    Car car = ((IMyCloneable<Car>)new Car("C", 150, 5)).Clone();
-    ElectricCar electric = ((IMyCloneable<ElectricCar>)new ElectricCar("E", 200, 5, 75)).Clone();
-    Check(vehicle.GetType() == typeof(Vehicle) && motor.GetType() == typeof(MotorVehicle)
-        && car.GetType() == typeof(Car) && electric.GetType() == typeof(ElectricCar), "Неверный тип");
+    VerifyTypedCopy(new Vehicle("V"));
+    VerifyTypedCopy(new MotorVehicle("M", 100));
+    VerifyTypedCopy(new Car("C", 150, 5));
+    VerifyTypedCopy(new ElectricCar("E", 200, 5, 75));
+}
+
+static void VerifyTypedCopy<T>(T source) where T : Vehicle, IMyCloneable<T>
+{
+    source.Accessories.Add("Камера");
+    IMyCloneable<T> prototype = source;
+    T clone = prototype.Clone();
+    VerifyCopy(source, clone);
 }
 
 static void VerifyPolymorphism()
@@ -103,7 +109,10 @@ static void VerifyPolymorphism()
     Vehicle[] clones = [vehicle.Clone(), motor.Clone(), car.Clone(), covariant.Clone(),
         ((IMyCloneable<MotorVehicle>)source).Clone(), ((IMyCloneable<Car>)source).Clone(),
         (Vehicle)((ICloneable)source).Clone()];
-    foreach (var clone in clones) VerifyCopy(source, clone);
+    foreach (var clone in clones)
+    {
+        VerifyCopy(source, clone);
+    }
 }
 
 static void VerifyIndependence()
@@ -120,5 +129,8 @@ static void VerifyIndependence()
 
 static void Check(bool condition, string message)
 {
-    if (!condition) throw new InvalidOperationException(message);
+    if (!condition)
+    {
+        throw new InvalidOperationException(message);
+    }
 }
