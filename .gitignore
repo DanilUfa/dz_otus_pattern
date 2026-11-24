@@ -2,9 +2,8 @@
 **/obj/
 .vs/
 .idea/
+.vscode/
 *.user
 *.suo
-
-
 .tools/
 .unused/
