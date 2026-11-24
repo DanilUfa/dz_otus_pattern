@@ -1,9 +1,7 @@
 **/bin/
 **/obj/
-.vs/
-.idea/
-.vscode/
-*.user
-*.suo
 .tools/
 .unused/
+.vs/
+.idea/
+*.user
